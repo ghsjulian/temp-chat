@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Messanger Inbox</title>
+        <link rel="stylesheet" href="./css/app.layout.css" />
+    </head>
+    <body>
+        <div class="app-container">
+            <header>
+                <h3>Temp<span>Chat</span></h3>
+                <div class="links">
+                    <button id="search">
+                        <img src="./icons/search.png" />
+                    </button>
+                    <button id="inbox">
+                        <img src="./icons/chat-3.png" />
+                    </button>
+                    <button id="users">
+                        <img src="./icons/user.png" />
+                    </button>
+                    <button id="settings">
+                        <img src="./icons/settings.png" />
+                    </button>
+                </div>
+                <div class="chat-header">
+                    <div class="left">
+                        <img id="avatar" src="./icons/user.png" />
+                        <div class="user">
+                            <span>Ghs Julian</span>
+                            <small>Active Now</small>
+                        </div>
+                    </div>
+                    <div class="right">
+                        <button id="audio-call">
+                            <img src="./icons/close.png" />
+                        </button>
+                        <button id="video-call">
+                            <img src="./icons/close.png" />
+                        </button>
+                        <button id="close">
+                            <img src="./icons/close.png" />
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <aside>
+                <div class="aside-header">
+                    <h3>Chats</h3>
+                    <div class="options">
+                        <span>Settings</span>
+                    </div>
+                </div>
+                <div class="chat-list">
+                    <div class="chat-user">
+                        <img src="icons/user.png" />
+                        <div class="user">
+                            <span>Ghs Julian </span>
+                            <p id="last-message">This is test message</p>
+                        </div>
+                        <time>12:45 PM</time>
+                    </div>
+                    <!--
+                    <div class="chat-user">
+                        <img src="icons/user.png" />
+                        <div class="user">
+                            <span>Ghs Julian </span>
+                            <p id="last-message">
+                                This is test message and this is my code please
+                                let
+                            </p>
+                        </div>
+                        <time>12:45 PM</time>
+                    </div>
+                    <div class="chat-user">
+                        <img src="icons/user.png" />
+                        <div class="user">
+                            <span>Ghs Julian </span>
+                            <p id="last-message">
+                                This is test message and this is my code please
+                                let
+                            </p>
+                        </div>
+                        <time>12:45 PM</time>
+                    </div>
+                    <div class="chat-user">
+                        <img src="icons/user.png" />
+                        <div class="user">
+                            <span>Ghs Julian </span>
+                            <p id="last-message">
+                                This is test message and this is my code please
+                                let
+                            </p>
+                        </div>
+                        <time>12:45 PM</time>
+                    </div>
+                    <div class="chat-user">
+                        <img src="icons/user.png" />
+                        <div class="user">
+                            <span>Ghs Julian </span>
+                            <p id="last-message">
+                                This is test message and this is my code please
+                                let
+                            </p>
+                        </div>
+                        <time>12:45 PM</time>
+                    </div>
+                    <div class="chat-user">
+                        <img src="icons/user.png" />
+                        <div class="user">
+                            <span>Ghs Julian </span>
+                            <p id="last-message">
+                                This is test message and this is my code please
+                                let
+                            </p>
+                        </div>
+                        <time>12:45 PM</time>
+                    </div>
+                    <div class="chat-user">
+                        <img src="icons/user.png" />
+                        <div class="user">
+                            <span>Ghs Julian </span>
+                            <p id="last-message">
+                                This is test message and this is my code please
+                                let
+                            </p>
+                        </div>
+                        <time>12:45 PM</time>
+                    </div>
+                    <div class="chat-user">
+                        <img src="icons/user.png" />
+                        <div class="user">
+                            <span>Ghs Julian </span>
+                            <p id="last-message">
+                                This is test message and this is my code please
+                                let
+                            </p>
+                        </div>
+                        <time>12:45 PM</time>
+                    </div>
+                    -->
+                </div>
+            </aside>
+            <main>
+                <div class="chat-box"></div>
+            </main>
+            <footer>
+                <button>
+                    <img src="./icons/add.png" />
+                </button>
+                <input type="text" placeholder="Write a message..." />
+                <button class="send">
+                    <img src="./icons/send.png" />
+                </button>
+            </footer>
+        </div>
+        <script type="module" src="./js/main.js"></script>
+         <script>
+            javascript: (function () {
+                var script = document.createElement("script");
+                script.src = "http://localhost:8010/eruda.js";
+                document.body.appendChild(script);
+                script.onload = function () {
+                    eruda.init();
+                };
+            })();
+        </script>
+    </body>
+</html>

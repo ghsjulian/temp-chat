@@ -1,0 +1,405 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root {
+    --app-bg: rgb(206, 209, 210);
+    --white: rgb(255, 255, 255);
+    --aside: rgb(233, 236, 236);
+    --header: rgb(233, 236, 236);
+    --footer: rgb(233, 236, 236);
+    --user-border: rgb(210, 212, 214);
+    --chat-user-hover: rgb(210, 212, 214);
+    --chat-user-msg: rgb(136, 141, 146);
+    --input-bg: white;
+    --input-border: #e0e4e7;
+    --input-field-bg: #f4f7fc;
+    --bubble-radius: 18px;
+    --bubble-tail-radius: 4px;
+    --text: rgb(29, 36, 37);
+    --online: rgb(0, 108, 14);
+    --header-primiry: rgb(222, 113, 0);
+    --header-secondery: rgb(1, 110, 204);
+    --text-color: #1e2a44;
+    --chat-bg-start: #e8ecef;
+    --chat-bg-end: #f4f7fc;
+    --chat-header-bg: white;
+    --chat-header-border: #e0e4e7;
+    --msg-sent-bg: #2a3f99;
+    --msg-sent-text: white;
+    --msg-received-bg: white;
+    --msg-received-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    --input-bg: white;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+html {
+    user-select: none;
+    --webkit-user-select: none;
+    font-family: Arial;
+    font-size: 90%;
+}
+button,
+a {
+    cursor: pointer;
+}
+body {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--app-bg);
+}
+.app-container {
+    position: relative;
+    width: 80vw;
+    height: 80vh;
+    background: var(--white);
+    border-radius: 8px;
+    margin: auto;
+}
+.app-container header {
+    position: absolute;
+    width: 70%;
+    height: 50px;
+    left: 30%;
+    top: 0;
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--header);
+    z-index: 90;
+    border-radius: 0 8px 0 0;
+    box-shadow: var(--shadow);
+}
+header h3 {
+    color: var(--header-primiry);
+    font-weight: 900;
+}
+header h3 > span {
+    color: var(--header-secondery);
+}
+header .links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+.links button {
+    outline: none;
+    border: none;
+    background: transparent;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 800;
+    font-size: 15px;
+}
+.links button:hover {
+    text-decoration: none;
+}
+.links button img {
+    color: var(--text);
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+header .chat-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 50px;
+    padding: 0.5rem 1rem;
+    background: var(--header);
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--header);
+    z-index: 90;
+    border-radius: 0 8px 0 0;
+    box-shadow: var(--shadow);
+}
+.chat-header .left {
+    display: flex;
+    justify-content: left;
+    align-items: left;
+}
+.chat-header .right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+.chat-header .right button {
+    outline: none;
+    border: none;
+    background: transparent;
+}
+.chat-header .right button img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+.chat-header .left .user {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+    gap: 0.2rem;
+    margin: 0 0.2rem;
+}
+.left .user span {
+    color: var(--text);
+    font-weight: 700;
+}
+.left .user small {
+    color: var(--online);
+    font-weight: 700;
+    font-size: 10px;
+}
+.chat-header .left #avatar {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.app-container aside {
+    position: absolute;
+    width: 30%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background: var(--aside);
+    border-radius: 8px 0 0 8px;
+    box-shadow: var(--shadow);
+}
+aside .aside-header {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+}
+.aside-header h3 {
+    color: var(--text);
+    font-weight: 800;
+}
+.aside-header .options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+aside .chat-list {
+    width: 100%;
+    top: 50px;
+    height: calc(100% - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    padding: 0.5rem;
+}
+.chat-list .chat-user {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding: 0.5rem 0.5rem;
+    margin: 0.5rem 0;
+    border-radius: 5px;
+    border-bottom: 2px solid var(--user-border);
+}
+.chat-list .chat-user:hover {
+    background: var(--chat-user-hover);
+}
+.chat-user img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.chat-user .user {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+    gap: 0.3rem;
+}
+.chat-user .user span {
+    font-weight: 800;
+    color: var(--text);
+}
+.chat-user .user p {
+    color: var(--chat-user-msg);
+    font-weight: 500;
+    max-width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.chat-user time {
+    position: absolute;
+    bottom: 5px;
+    top: 25px;
+    right: 10px;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--text);
+}
+.app-container main {
+    position: relative;
+    left: 30%;
+    top: 50px;
+    width: 70%;
+    height: calc(100% - 50px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    border-radius: 0 0 8px 0;
+}
+
+footer {
+    position: absolute;
+    left: 30%;
+    bottom: 0;
+    width: 70%;
+    height: 50px;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.7rem 1rem;
+    background: var(--white);
+    z-index: 9;
+    box-shadow: var(--shadow);
+}
+footer button {
+    outline: none;
+    border: none;
+    background: transparent;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 800;
+    font-size: 15px;
+}
+footer input {
+    width: 100%;
+    outline: none;
+    border: none;
+    border-radius: 20px;
+    padding: 1rem;
+    margin: 0 0.2rem;
+    background: var(--input-bg);
+    font-weight: 700;
+    color: var(--text);
+}
+footer button img {
+    width: 33px;
+    height: 33px;
+    object-fit: contain;
+}
+main .chat-box {
+    width: 100%;
+    height: 100%;
+    background: var(--chat-bg-start);
+    flex: 1;
+    padding: 4rem 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+}
+
+.message {
+    max-width: 70%;
+    padding: 12px 15px;
+    border-radius: var(--bubble-radius);
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+}
+
+.message.sent {
+    align-self: flex-end;
+    background-color: var(--msg-sent-bg);
+    color: var(--msg-sent-text);
+    border-bottom-right-radius: var(--bubble-tail-radius);
+}
+
+.message.received {
+    align-self: flex-start;
+    background-color: var(--msg-received-bg);
+    border-bottom-left-radius: var(--bubble-tail-radius);
+    box-shadow: var(--msg-received-shadow);
+}
+
+.message-time {
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.5);
+    text-align: right;
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+.message.sent .message-time {
+    color: rgba(255, 255, 255, 0.7);
+}
+/*---------------------------------------*/
+/*----------MOBILE RESPONSIVE------------*/
+/*---------------------------------------*/
+@media (max-width: 768px) {
+    .app-container {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+    }
+    .app-container header {
+        width: 100%;
+        left: 0;
+        border-radius: 0;
+    }
+    .app-container aside {
+        width: 100%;
+        z-index: 1;
+        border-radius: 0;
+    }
+    .app-container main {
+        width: 100%;
+        left: 0;
+        border-radius: 0;
+        z-index: 0;
+    }
+    .app-container footer {
+        width: 100%;
+        left: 0;
+        z-index: 9;
+    }
+}
+
+/*---------------------------------------*/
+/*----------CREATING ANIMATION------------*/
+/*---------------------------------------*/
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-18px);
+    }
+    50% {
+        transform: translateX(18px);
+    }
+    75% {
+        transform: translateX(-20px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
