@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
+// attachment icon
+import { GrAttachment } from "react-icons/gr";
+// send icon
+import { LuSendHorizontal } from "react-icons/lu";
 import useApp from "../store/useApp";
 import useAuth from "../store/useAuth";
+import useSocket from "../store/useSocket";
 
 const Footer = () => {
-    const { selectedUser, sendMessage } = useApp();
+    const { sendMessage } = useSocket();
+    const { selectedUser } = useApp();
     const { user } = useAuth();
     const [text, setText] = useState("");
     const sendText = () => {
@@ -11,6 +17,7 @@ const Footer = () => {
         const tempMessage = {
             text,
             images: [],
+            isImage : false,
             sender_name: user.name,
             sender_id: user._id,
             sender_avatar: user.avatar,
@@ -19,7 +26,7 @@ const Footer = () => {
             receiver_avatar: selectedUser.avatar,
             time: Date.now(),
             last_message: text,
-            createAt: Date.now()
+            
         };
         sendMessage(tempMessage);
         setText("");
@@ -27,9 +34,10 @@ const Footer = () => {
 
     return (
         <footer>
-            <button>
-                <img src="/icons/add.png" />
-            </button>
+            <div className="icon">
+                <GrAttachment size={26} />
+            </div>
+
             <input
                 onKeyDown={e => {
                     if (e.keyCode === 13) {
@@ -42,9 +50,9 @@ const Footer = () => {
                 type="text"
                 placeholder="Write a message..."
             />
-            <button className="send">
-                <img src="/icons/send.png" />
-            </button>
+            <div onClick={sendText} className="icon">
+                <LuSendHorizontal size={29} />
+            </div>
         </footer>
     );
 };

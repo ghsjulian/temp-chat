@@ -9,7 +9,6 @@ const messageSchema = new mongoose.Schema(
         sender_id: {
             type: String,
             required: true,
-            unique: true
         },
         sender_avatar: {
             type: String,
@@ -21,9 +20,8 @@ const messageSchema = new mongoose.Schema(
         },
         receiver_id: {
             type: String,
-            required: true,
-            unique: true
-        },
+            required: true
+            },
         receiver_avatar: {
             type: String,
             default: ""

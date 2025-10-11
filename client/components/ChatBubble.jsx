@@ -1,11 +1,16 @@
 import React from "react";
+import useAuth from "../store/useAuth";
+import timeAgo from "../libs/formatter"
 
-const ChatBubble = ({text,sender,time}) => {
+const ChatBubble = ({ id, text, sender, time }) => {
+    const { user } = useAuth();
+    const isMe = user?._id === sender ? "sent" : "received";
+
     return (
         <>
-            <div className={`message ${sender}`}>
+            <div style={{animation : "shake .6s linear"}} className={`message ${isMe}`}>
                 {text}
-                <div className="message-time">{time}</div>
+                <div className="message-time">{timeAgo(time)}</div>
             </div>
             {/*
             <div className="message received">

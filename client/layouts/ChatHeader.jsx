@@ -1,25 +1,36 @@
 import React from "react";
+// Call icon
+import { MdAddIcCall } from "react-icons/md";
+// Video call icon
+import { MdVideoCall } from "react-icons/md";
 import useApp from "../store/useApp";
 
 const ChatHeader = () => {
-    const { selectedUser } = useApp();
+    const { selectedUser, setChatUser } = useApp();
 
     return (
         <div className="chat-header">
             <div className="left">
-                <img id="avatar" src={selectedUser?.avatar? selectedUser?.avatar:"/icons/user.png"} />
+                <img
+                    id="avatar"
+                    src={
+                        selectedUser?.avatar
+                            ? selectedUser?.avatar
+                            : "/icons/user.png"
+                    }
+                />
                 <div className="user">
                     <span>{selectedUser.name}</span>
                     <small>Active Now</small>
                 </div>
             </div>
             <div className="right">
-                <button id="audio-call">
-                    <img src="/icons/calling.png" />
-                </button>
-                <button id="video-call">
-                    <img src="/icons/video.png" />
-                </button>
+                <div className="icon">
+                    <MdAddIcCall size={30} />
+                </div>
+                <div className="icon">
+                    <MdVideoCall size={40} />
+                </div>
             </div>
         </div>
     );

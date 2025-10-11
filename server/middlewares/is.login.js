@@ -5,7 +5,7 @@ const isLogin = async (req, res, next) => {
     try {
         const cookie = req?.cookies?.tempchat;
         if (!cookie || cookie === null) throw new Error("No Cookie Found");
-        const data = decodeJWT(cookie);
+        const data = await decodeJWT(cookie);
         if (!data) throw new Error("Unauthorized User");
         req.user = data;
         next();

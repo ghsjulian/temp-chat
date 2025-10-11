@@ -48,7 +48,7 @@ const Sidebar = () => {
                 </div>
                 <div className="option">
                     <div className="icon">
-                        <HiOutlineUsers size={28} />
+                        <HiOutlineUsers size={25} />
                     </div>
                     <div
                         onClick={e => {
@@ -56,7 +56,7 @@ const Sidebar = () => {
                         }}
                         className="icon"
                     >
-                        <BsGear size={26} />
+                        <BsGear size={23} />
                     </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@ const Sidebar = () => {
                                   <div className="user">
                                       <span>{chat?.name}</span>
                                       <p id="last-message">
-                                          {chat?.lastMessage}
+                                          {chat?.last_message}
                                       </p>
                                   </div>
                                   <time>{chat?.time}</time>

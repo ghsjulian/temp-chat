@@ -54,14 +54,6 @@ const useApp = create((set, get) => ({
     },
     setChatUser: user => {
         set({ selectedUser: user });
-    },
-    sendMessage: async message => {
-        try {
-            const response = await axios.post("/send-message/"+get().selectedUser._id, message)
-            console.log(response.data);
-        } catch (error) {
-            console.error("Error:", error);
-        }
     }
 }));
 

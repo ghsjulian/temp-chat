@@ -70,6 +70,7 @@ body {
     background: var(--app);
     border-radius: 8px;
     margin: auto;
+    box-shadow: var(--shadow-1);
 }
 .app-container header {
     position: absolute;
@@ -178,17 +179,29 @@ header .chat-header {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1.3rem;
+    gap: 0.5rem;
 }
 .chat-header .right button {
     outline: none;
     border: none;
     background: transparent;
 }
-.chat-header .right button img {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
+.chat-header .right .icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 0.5rem;
+}
+.chat-header .right .icon {
+    color: var(--icon);
+}
+.chat-header .right .icon:hover {
+    transition: 0.3s ease-in all;
+    background: var(--app);
+    box-shadow: var(--shadow-2);
 }
 .chat-header .left .user {
     display: flex;
@@ -212,6 +225,7 @@ header .chat-header {
     height: 45px;
     object-fit: cover;
     border-radius: 50%;
+    border: 2px solid var(--app);
 }
 .app-container aside {
     position: absolute;
@@ -280,20 +294,21 @@ aside .chat-list {
     display: flex;
     align-items: center;
     justify-content: left;
-    padding: 0.5rem 0.5rem;
-    margin: 0.5rem 0;
-    border-radius: 5px;
-    border-bottom: 2px solid var(--user-border);
+    padding: 0.3rem 0.5rem;
+    margin: 0.7rem 0;
+    border-bottom: 2px solid var(--app);
 }
 .chat-list .chat-user:hover {
-    background: var(--chat-user-hover);
+    background: var(--app);
+    transition: 0.3s ease-in all;
+    border-radius: 8px;
 }
 .chat-user img {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
     object-fit: cover;
     border-radius: 50%;
-    margin-right: 5px;
+    margin-right: 8px;
 }
 .chat-user .user {
     display: flex;
@@ -403,9 +418,9 @@ footer {
     justify-content: space-between;
     align-items: center;
     padding: 0.7rem 1rem;
-    background: var(--white);
+    background: var(--header);
     z-index: 9;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-2);
 }
 footer button {
     outline: none;
@@ -417,16 +432,36 @@ footer button {
     font-size: 15px;
     width: 60px;
 }
+footer .icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 0.5rem;
+}
+footer .icon {
+    color: var(--icon);
+}
+footer .icon:hover {
+    transition: 0.3s ease-in all;
+    background: var(--app);
+    box-shadow: var(--shadow-2);
+}
 footer input {
     width: 100%;
     outline: none;
-    border: none;
-    border-radius: 20px;
-    padding: 1rem;
+    border: 2px solid var(--app);
+    border-radius: 30px;
+    padding: 0.7rem 1rem;
     margin: 0 0.2rem;
-    background: var(--input-bg);
+    background: transparent;
     font-weight: 700;
     color: var(--text);
+}
+footer input:focus {
+    border: 2px solid rgba(196,196,196,0.874);
 }
 footer button img {
     width: 33px;
