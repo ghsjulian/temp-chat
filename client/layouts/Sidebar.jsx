@@ -70,7 +70,7 @@ const Sidebar = () => {
                                   to={`/chat/${user?.name}/${user?._id}`}
                                   className="chat-user"
                               >
-                                  <img src="icons/user.png" />
+                                  <img src="./icons/user.png" />
                                   <div className="user">
                                       <span>{user?.name}</span>
                                   </div>
@@ -86,7 +86,7 @@ const Sidebar = () => {
                                   to={`/chat/${chat?.name}/${chat?._id}`}
                                   className="chat-user"
                               >
-                                  <img src="icons/user.png" />
+                                  <img src="./icons/user.png" />
                                   <div className="user">
                                       <span>{chat?.name}</span>
                                       <p id="last-message">
@@ -105,7 +105,7 @@ const Sidebar = () => {
                                   to={`/chat/${user?.name}/${user?._id}`}
                                   className="chat-user"
                               >
-                                  <img src="icons/user.png" />
+                                  <img src="./icons/user.png" />
                                   <div className="user">
                                       <span>{user?.name}</span>
                                   </div>

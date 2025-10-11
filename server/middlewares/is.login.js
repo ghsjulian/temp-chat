@@ -7,7 +7,9 @@ const isLogin = async (req, res, next) => {
         if (!cookie || cookie === null) throw new Error("No Cookie Found");
         const data = await decodeJWT(cookie);
         if (!data) throw new Error("Unauthorized User");
-        req.user = data;
+        const user = await userModel.findById(data?._id).select("-password")
+        if(!user || !user?._id) throw new Error("Invalid User");
+        req.user = user;
         next();
     } catch (error) {
         return res.status(403).json({

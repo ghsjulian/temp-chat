@@ -14,6 +14,18 @@ const useSocket = create((set, get) => ({
         } catch (error) {
             console.error("Error:", error);
         }
+    },
+    getChats: async (id) => {
+        try {
+            const response = await axios.get("/messages/get-chats?id="+id);
+            if(response?.data?.success){
+                set({messages : response?.data?.chats})
+            } else {
+                set({messages:[]})
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
     }
 }));
 

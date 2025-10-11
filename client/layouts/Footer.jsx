@@ -37,7 +37,6 @@ const Footer = () => {
             <div className="icon">
                 <GrAttachment size={26} />
             </div>
-
             <input
                 onKeyDown={e => {
                     if (e.keyCode === 13) {

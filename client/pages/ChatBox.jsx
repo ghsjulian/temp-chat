@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink, Outlet, useLocation, useParams } from "react-router-dom";
 import useApp from "../store/useApp";
 import useSocket from "../store/useSocket";
@@ -10,7 +10,7 @@ const ChatBox = () => {
     const location = useLocation();
     const { name, id } = useParams();
     const [path, setPath] = useState("");
-    const chatBoxRef = useRef(null)
+    const chatBoxRef = useRef(null);
     useEffect(() => {
         setPath(location.pathname);
         if (path !== "/") {
@@ -18,9 +18,8 @@ const ChatBox = () => {
         }
     }, [path]);
     useEffect(() => {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }, [messages,chatBoxRef])
-    
+        chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }, [messages, chatBoxRef]);
 
     return (
         <div ref={chatBoxRef} className="chat-box">

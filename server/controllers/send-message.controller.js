@@ -16,14 +16,18 @@ const sendMessage = async (req, res) => {
             time,
             last_message
         } = req.body;
-        // check validation
-        if (!text || text === "") throw new Error("Please Write A Message");
+
+        // Validation
+        if (!text || text.trim() === "")
+            throw new Error("Please write a message");
         if (isImage) {
-            if (!images || images?.length === 0)
+            if (!images || images.length === 0)
                 throw new Error("No image provided");
-            //TODO --> Cloudinary Will Be Applied Here...
+            // TODO : --> Cloudinary Applied Here
         }
-        const newMessage = await new messageModel({
+
+        // Create new message
+        const newMessage = new messageModel({
             text,
             images: tempImages,
             sender_name,
@@ -37,13 +41,14 @@ const sendMessage = async (req, res) => {
             seen: false
         });
         await newMessage.save();
-        return res.json(newMessage);
+        return res.json({ success: true, data: newMessage });
     } catch (error) {
         console.log(error);
         return res.status(403).json({
             success: false,
-            message: error.message || "Unexpected Error Occured"
+            message: error.message || "Unexpected Error Occurred"
         });
     }
 };
+
 module.exports = sendMessage;

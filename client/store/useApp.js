@@ -1,12 +1,14 @@
 import { useRef } from "react";
 import { create } from "zustand";
 import axios from "../libs/axios";
+import useSocket from "./useSocket"
+
 
 const useApp = create((set, get) => ({
     searchUsers: [],
     randomUsers : [],
     chatUsers: [],
-    selectedUser: {},
+    selectedUser: JSON.parse(localStorage.getItem("chat-user")) || {},
     isactiveChatHeader: false,
     isSettingOpen: false,
     isSearch: false,
@@ -44,7 +46,7 @@ const useApp = create((set, get) => ({
     },
     getChatUsers: async () => {
         try {
-            const res = await axios.get("/messages/get-chats");
+            const res = await axios.get("/messages/get-chat-users");
             if (res?.data.length > 0) {
                 set({ chatUsers: res?.data });
             }
@@ -52,7 +54,9 @@ const useApp = create((set, get) => ({
             console.error("Error getSidebarUsers :", error);
         }
     },
-    setChatUser: user => {
+    setChatUser: async(user) => {
+       await useSocket.getState().getChats(user?._id)
+        localStorage.setItem("chat-user",JSON.stringify(user))
         set({ selectedUser: user });
     }
 }));
