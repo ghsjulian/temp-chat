@@ -37,7 +37,7 @@
     --chat-bg-end: #f4f7fc;
     --chat-header-bg: white;
     --chat-header-border: #e0e4e7;
-    --msg-sent-bg: #2a3f99;
+    --msg-sent-bg: #17789b;
     --msg-sent-text: white;
     --msg-received-bg: white;
     --msg-received-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -198,6 +198,14 @@ header .chat-header {
 .chat-header .right .icon {
     color: var(--icon);
 }
+.chat-header .right .call {
+    color: #f80c0c;
+}
+.chat-header .right .video {
+    color: #00b601;
+    width: 43px;
+    height: 43px;
+}
 .chat-header .right .icon:hover {
     transition: 0.3s ease-in all;
     background: var(--app);
@@ -275,6 +283,19 @@ aside .aside-header {
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
+}
+aside .active {
+    color: var(--msg-sent-bg);
+    font-weight: 600;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 0.5rem;
+    background: var(--app);
+    box-shadow: var(--shadow-2);
 }
 aside a {
     text-decoration: none;
@@ -433,8 +454,8 @@ footer button {
     width: 60px;
 }
 footer .icon {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -442,7 +463,7 @@ footer .icon {
     padding: 0.5rem;
 }
 footer .icon {
-    color: var(--icon);
+    color: var(--msg-sent-bg);
 }
 footer .icon:hover {
     transition: 0.3s ease-in all;
@@ -461,7 +482,7 @@ footer input {
     color: var(--text);
 }
 footer input:focus {
-    border: 2px solid rgba(196,196,196,0.874);
+    border: 2px solid rgba(196, 196, 196, 0.874);
 }
 footer button img {
     width: 33px;
@@ -508,12 +529,12 @@ main .chat-box {
     height: 100%;
     background: var(--chat-bg-start);
     flex: 1;
-    padding: 4rem 1rem;
+    padding: 6rem 1rem;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
 }
 
 .message {
@@ -521,6 +542,7 @@ main .chat-box {
     padding: 12px 15px;
     border-radius: var(--bubble-radius);
     font-size: 14px;
+    font-weight: 700;
     line-height: 1.4;
     position: relative;
 }
@@ -530,6 +552,7 @@ main .chat-box {
     background-color: var(--msg-sent-bg);
     color: var(--msg-sent-text);
     border-bottom-right-radius: var(--bubble-tail-radius);
+    box-shadow: var(--msg-received-shadow);
 }
 
 .message.received {
@@ -541,6 +564,7 @@ main .chat-box {
 
 .message-time {
     font-size: 11px;
+    font-weight: 500;
     color: rgba(0, 0, 0, 0.5);
     text-align: right;
     margin-top: 5px;

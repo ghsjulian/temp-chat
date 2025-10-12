@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 // search icon
 import { MdSearch } from "react-icons/md";
@@ -8,6 +8,7 @@ import { BsGear } from "react-icons/bs";
 import { HiOutlineUsers } from "react-icons/hi2";
 import useSocket from "../store/useSocket";
 import useApp from "../store/useApp";
+import timeAgo from "../libs/formatter";
 
 const Sidebar = () => {
     const { messages } = useSocket();
@@ -20,13 +21,16 @@ const Sidebar = () => {
         randomUsers,
         getRandomUsers,
         setChatUser,
-        openSetting
+        openSetting,
+        isSettingOpen,
+        renderChatUser
     } = useApp();
     useEffect(() => {
         getChatUsers();
         getRandomUsers();
     }, [getChatUsers, renderSearch]);
-
+    const userRef = useRef(null);
+    const gearRef = useRef(null);
     const [term, setTerm] = useState("");
 
     return (
@@ -47,14 +51,21 @@ const Sidebar = () => {
                     />
                 </div>
                 <div className="option">
-                    <div className="icon">
+                    <div
+                        ref={userRef}
+                        onClick={e => {
+                            userRef.current.classList.add("active");
+                            renderChatUser();
+                        }}
+                        className="icon"
+                    >
                         <HiOutlineUsers size={25} />
                     </div>
                     <div
                         onClick={e => {
                             openSetting(true);
                         }}
-                        className="icon"
+                        className={isSettingOpen ? "icon active" : "icon"}
                     >
                         <BsGear size={23} />
                     </div>
@@ -77,23 +88,23 @@ const Sidebar = () => {
                               </NavLink>
                           );
                       })
-                    : chatUsers?.length > 0 ?
-                      chatUsers?.map((chat, idx) => {
+                    : chatUsers?.length > 0
+                    ? chatUsers?.map((chat, idx) => {
                           return (
                               <NavLink
-                                  onClick={() => setChatUser(user)}
                                   key={idx}
+                                  onClick={() => setChatUser(chat)}
                                   to={`/chat/${chat?.name}/${chat?._id}`}
                                   className="chat-user"
                               >
-                                  <img src="./icons/user.png" />
+                                  <img src="/icons/user.png" />
                                   <div className="user">
                                       <span>{chat?.name}</span>
                                       <p id="last-message">
                                           {chat?.last_message}
                                       </p>
                                   </div>
-                                  <time>{chat?.time}</time>
+                                  <time>{timeAgo(parseInt(chat?.time))}</time>
                               </NavLink>
                           );
                       })
@@ -105,13 +116,13 @@ const Sidebar = () => {
                                   to={`/chat/${user?.name}/${user?._id}`}
                                   className="chat-user"
                               >
-                                  <img src="./icons/user.png" />
+                                  <img src="/icons/user.png" />
                                   <div className="user">
                                       <span>{user?.name}</span>
                                   </div>
                               </NavLink>
-                              )})
-                }
+                          );
+                      })}
             </div>
         </aside>
     );

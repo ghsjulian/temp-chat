@@ -25,11 +25,11 @@ const ChatHeader = () => {
                 </div>
             </div>
             <div className="right">
-                <div className="icon">
+                <div className="icon call">
                     <MdAddIcCall size={30} />
                 </div>
-                <div className="icon">
-                    <MdVideoCall size={40} />
+                <div className="icon video">
+                    <MdVideoCall size={45} />
                 </div>
             </div>
         </div>
