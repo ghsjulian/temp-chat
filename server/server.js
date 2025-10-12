@@ -9,7 +9,7 @@ const HOST = process.env.HOST || "127.0.0.1";
 const socketServer = require("./socketio/socket-server");
 const createConnection = require("./configs/db.config");
 const myServer = new socketServer();
-
+const seedNow = require("./seeder")
 const publicPath = path.join(__dirname, "../public/");
 myServer.app.use(express.json({ limit: "1000mb" }));
 myServer.app.use(
@@ -33,4 +33,7 @@ myServer.server.listen(PORT, async () => {
     await createConnection();
     console.log(`\n[+] Express Server Running !`);
     console.log(`\n[+] Host : http://${HOST}:${PORT}\n`);
+    seedNow()
 });
+
+

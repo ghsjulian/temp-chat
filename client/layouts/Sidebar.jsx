@@ -42,6 +42,10 @@ const Sidebar = () => {
                     </div>
                     <input
                         onKeyUp={e => {
+                            if (!term || term?.trim() === "") {
+                                renderChatUser()
+                                return 
+                            }
                             renderSearch(term.trim());
                         }}
                         onChange={e => setTerm(e.target.value)}
@@ -55,9 +59,14 @@ const Sidebar = () => {
                         ref={userRef}
                         onClick={e => {
                             userRef.current.classList.add("active");
+                            setTerm("");
                             renderChatUser();
                         }}
-                        className="icon"
+                        className={
+                            chatUsers?.length > 0 && term === ""
+                                ? "icon active"
+                                : "icon"
+                        }
                     >
                         <HiOutlineUsers size={25} />
                     </div>
@@ -88,7 +97,7 @@ const Sidebar = () => {
                               </NavLink>
                           );
                       })
-                    : chatUsers?.length > 0
+                    : chatUsers?.length > 0 && term?.trim() === ""
                     ? chatUsers?.map((chat, idx) => {
                           return (
                               <NavLink
@@ -123,6 +132,9 @@ const Sidebar = () => {
                               </NavLink>
                           );
                       })}
+                {searchUsers?.length === 0 &&
+                    chatUsers?.length === 0 &&
+                    randomUsers?.length === 0 && <h2>No user found</h2>}
             </div>
         </aside>
     );
