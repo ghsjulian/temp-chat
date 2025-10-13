@@ -1,20 +1,36 @@
 const userModel = require("../models/user.model");
 const { createHash } = require("../functions/password-hashing");
 const { createJWT, setCookie } = require("../functions/jwt-token-generator");
+const sendMail = require("../configs/mailer.config");
+const { Uploader, DeleteFile } = require("../configs/cloudinary.config");
+
+const getString = () => {
+    const randomNumber = Math.floor(1000000000 + Math.random() * 9000000000);
+    return "ghs---" + randomNumber.toString();
+};
 
 const signupController = async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, profile, isProfile } = req.body;
+        let avatar = null;
+        const publicID = getString();
+
         if (!name && !email && !password)
             throw new Error("All fields are required");
         const existUser = await userModel.findOne({
-            email: email.trim()        });
+            email: email.trim()
+        });
         if (existUser) throw new Error("User Already Registered");
         const hash = await createHash(password.trim());
+        if (isProfile) {
+            const uploadResult = await Uploader(profile, publicID, isProfile);
+            avatar = uploadResult?.secure_url;
+        }
         const newUser = await new userModel({
             name,
             email,
-            password: hash
+            password: hash,
+            avatar: isProfile ? avatar : ""
         });
         const token = await createJWT({ _id: newUser._id, name, email });
         setCookie(res, token);
@@ -24,6 +40,7 @@ const signupController = async (req, res) => {
         // And offline can't send emails
         // await sendMail(name, email, otp);
         const user = await userModel.findOne({ email }).select("-password");
+        await sendMail(user?.name, user?.email);
         return res.status(201).json({
             success: true,
             token,
@@ -31,6 +48,7 @@ const signupController = async (req, res) => {
             message: "User Created Successfully"
         });
     } catch (error) {
+        await DeleteFile(publicID)
         return res.status(403).json({
             success: false,
             message: error.message || "Server Error - 403"

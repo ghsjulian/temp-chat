@@ -100,9 +100,27 @@ button,
     background: var(--success-bg);
     border: 0.2px solid var(--success-border);
 }
+.login-container img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid var(--app-bg);
+    object-fit: cover;
+    margin: 0.5rem auto;
+}
+.login-container label {
+    width: 90%;
+    font-weight: 800;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem auto;
+    text-align: center;
+    border-radius: 5px;
+    border: 2px solid var(--app-bg);
+    cursor: pointer;
+}
 .login-container input {
     outline: none;
-    border: 1px solid var(--header-secondery);
+    border: 2px solid var(--app-bg);
     color: var(--text-color);
     background: transparent;
     font-weight: 800;
@@ -122,5 +140,25 @@ button,
     padding: 0.7rem 1rem;
 }
 .login-container button:hover {
-    background: rgb(3,34,64);
+    background: rgb(3, 34, 64);
+}
+.login-container .footer-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem auto;
+}
+.footer-area p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.7rem;
+}
+.footer-area p a {
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    background: #0481a2;
+    color: #fff;
+    font-weight: 600;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {useNavigate} from "react-router-dom"
+import {useNavigate,NavLink} from "react-router-dom"
 import "../styles/login.css";
 import useAuth from "../store/useAuth"
 
@@ -64,7 +64,11 @@ const Login = () => {
             <button onClick={handleLogin} className="login-btn">
                 {isSigningIn? "Processing..." : "Login Now"}
             </button>
-            <div className="footer-area"></div>
+            <div className="footer-area">
+                <p>
+                    Don't Have Account ? <NavLink to="/signup">Login</NavLink>
+                </p>
+            </div>
         </div>
     );
 };

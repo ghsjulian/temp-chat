@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import "../styles/login.css";
 import useAuth from "../store/useAuth";
 
@@ -10,6 +10,7 @@ const Signup = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [profile, setProfile] = useState(null);
 
     const showMessage = (message, type) => {
         if (type) {
@@ -45,16 +46,30 @@ const Signup = () => {
             {
                 name: name.trim(),
                 email: email.trim(),
-                password: password.trim()
+                password: password.trim(),
+                profile : profile,
+                isProfile : profile ? true:false
             },
             showMessage,
             navigate
         );
     };
 
+    const handleImage = e => {
+        let file = e.target.files[0];
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = async result => {
+            setProfile(reader.result)
+        };
+    };
+
     return (
         <div className="login-container">
             <span ref={msgRef} id="message"></span>
+            {profile&& <img id="avatar" src={profile || "/icons/user.png"} />}
+            <label htmlFor="user-img">Upload a profile pic</label>
+            <input onChange={handleImage} type="file" accept="image/*" id="user-img" hidden={true} />
             <input
                 onChange={e => setName(e.target.value)}
                 value={name}
@@ -79,7 +94,11 @@ const Signup = () => {
             <button onClick={handleLogin} className="login-btn">
                 {isSignup ? "Processing..." : "Create Account"}
             </button>
-            <div className="footer-area"></div>
+            <div className="footer-area">
+                <p>
+                    Already Have Account ? <NavLink to="/login">Login</NavLink>
+                </p>
+            </div>
         </div>
     );
 };
