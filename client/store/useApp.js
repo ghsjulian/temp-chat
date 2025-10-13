@@ -2,6 +2,8 @@ import { useRef } from "react";
 import { create } from "zustand";
 import axios from "../libs/axios";
 import useSocket from "./useSocket";
+import { deleteDB } from "../libs/indexDB";
+import useAuth from "./useAuth";
 
 const useApp = create((set, get) => ({
     searchUsers: [],
@@ -61,6 +63,26 @@ const useApp = create((set, get) => ({
         await useSocket.getState().getChats(user?._id);
         localStorage.setItem("chat-user", JSON.stringify(user));
         set({ selectedUser: user });
+    },
+    logout: async () => {
+        try {
+            const response = axios.post("/auth/user/logout");
+            await deleteDB();
+            if (response?.data?.success) {
+                localStorage.removeItem("tempchat");
+                localStorage.removeItem("chat-user");
+                useAuth.setState().user = null;
+                set({
+                    searchUsers: [],
+                    chatUsers: [],
+                    selectedUser: [],
+                    randomUsers: []
+                });
+            }
+            console.log("[+] User Logout Successfully");
+        } catch (err) {
+            console.error("Error:", err);
+        }
     }
 }));
 

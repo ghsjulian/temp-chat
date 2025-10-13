@@ -87,3 +87,20 @@ export const updateMessagesById = async (receiver_id, newMessagesArray) => {
 
     return tx.complete;
 };
+
+export const deleteDB = () => {
+    return new Promise((resolve, reject) => {
+        const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
+        deleteRequest.onsuccess = () => {
+            resolve(true);
+        };
+        deleteRequest.onerror = event => {
+            reject(event);
+        };
+        deleteRequest.onblocked = () => {
+            console.warn(
+                `⚠️ Deletion blocked for "${DB_NAME}". Please close all open tabs.`
+            );
+        };
+    });
+};

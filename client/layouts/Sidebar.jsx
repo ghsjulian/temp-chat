@@ -32,6 +32,17 @@ const Sidebar = () => {
     const userRef = useRef(null);
     const gearRef = useRef(null);
     const [term, setTerm] = useState("");
+    const [isToggle, setToggle] = useState(false);
+
+    const toggleUser = () => {
+        setToggle(!isToggle);
+        if (isToggle) {
+            if (chatUsers?.length > 0 && term === "") {
+                setTerm("");
+                renderChatUser();
+            }
+        }
+    };
 
     return (
         <aside style={{ zIndex: isactiveChatHeader && "0" }}>
@@ -43,8 +54,8 @@ const Sidebar = () => {
                     <input
                         onKeyUp={e => {
                             if (!term || term?.trim() === "") {
-                                renderChatUser()
-                                return 
+                                renderChatUser();
+                                return;
                             }
                             renderSearch(term.trim());
                         }}
@@ -57,13 +68,9 @@ const Sidebar = () => {
                 <div className="option">
                     <div
                         ref={userRef}
-                        onClick={e => {
-                            userRef.current.classList.add("active");
-                            setTerm("");
-                            renderChatUser();
-                        }}
+                        onClick={toggleUser}
                         className={
-                            chatUsers?.length > 0 && term === ""
+                            isToggle
                                 ? "icon active"
                                 : "icon"
                         }
@@ -90,7 +97,13 @@ const Sidebar = () => {
                                   to={`/chat/${user?.name}/${user?._id}`}
                                   className="chat-user"
                               >
-                                  <img src="./icons/user.png" />
+                                  <img
+                                      src={
+                                          user?.avatar
+                                              ? user?.avatar
+                                              : "./icons/user.png"
+                                      }
+                                  />
                                   <div className="user">
                                       <span>{user?.name}</span>
                                   </div>
@@ -106,7 +119,13 @@ const Sidebar = () => {
                                   to={`/chat/${chat?.name}/${chat?._id}`}
                                   className="chat-user"
                               >
-                                  <img src="/icons/user.png" />
+                                  <img
+                                      src={
+                                          chat?.avatar
+                                              ? chat?.avatar
+                                              : "./icons/user.png"
+                                      }
+                                  />
                                   <div className="user">
                                       <span>{chat?.name}</span>
                                       <p id="last-message">
@@ -125,7 +144,13 @@ const Sidebar = () => {
                                   to={`/chat/${user?.name}/${user?._id}`}
                                   className="chat-user"
                               >
-                                  <img src="/icons/user.png" />
+                                  <img
+                                      src={
+                                          user?.avatar
+                                              ? user?.avatar
+                                              : "./icons/user.png"
+                                      }
+                                  />
                                   <div className="user">
                                       <span>{user?.name}</span>
                                   </div>

@@ -405,6 +405,19 @@ aside .chat-list {
     justify-content: space-between;
     gap: 0.5rem;
 }
+.settings li .left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.settings li .left .icon {
+    margin: 0 0.3rem;
+}
+.settings li:hover {
+    transition: 0.3s ease-in all;
+    background: var(--app);
+    border-radius: 5px;
+}
 .settings li select {
     outline: none;
     border: 0.1px solid var(--text-color);
