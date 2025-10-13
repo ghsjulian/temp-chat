@@ -9,7 +9,7 @@ const HOST = process.env.HOST || "127.0.0.1";
 const socketServer = require("./socketio/socket-server");
 const createConnection = require("./configs/db.config");
 const myServer = new socketServer();
-const seedNow = require("./seeder")
+const seedNow = require("./seeder");
 const publicPath = path.join(__dirname, "../public/");
 myServer.app.use(express.json({ limit: "1000mb" }));
 myServer.app.use(
@@ -27,13 +27,13 @@ myServer.app.use(express.static(publicPath));
 myServer.app.use("/api/v1", require("./routes/auth.routes"));
 myServer.app.use("/api/v1/messages", require("./routes/message.routes"));
 /*--------------------------------------------------------------*/
-
+myServer.app.get("/seed-user", async (req, res) => {
+    let data = await seedNow();
+    return res.json({ msg: data });
+});
 console.clear();
 myServer.server.listen(PORT, async () => {
     await createConnection();
     console.log(`\n[+] Express Server Running !`);
     console.log(`\n[+] Host : http://${HOST}:${PORT}\n`);
-    seedNow()
 });
-
-

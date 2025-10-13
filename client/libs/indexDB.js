@@ -1,62 +1,89 @@
-import { openDB } from "idb";
+// libs/indexDB.js
 
-// Create DB
-export const db = await openDB("tempchat", 1, {
-    upgrade(db) {
-        if (!db.objectStoreNames.contains("messages")) {
-            const store = db.createObjectStore("messages", {
-                keyPath: "id",
-                autoIncrement: true
-            });
-            store.createIndex("chatId", "chatId", { unique: false });
-            store.createIndex("messageId", "messageId", { unique: true });
-        }
-    }
-});
+const DB_NAME = "ChatDB";
+const STORE_NAME = "messages";
+const DB_VERSION = 1;
 
-export const saveMessages = async (chatId, messages) => {
-    if (!messages?.length) return;
-
-    const tx = db.transaction("messages", "readwrite");
-    const store = tx.objectStore("messages");
-
-    for (const msg of messages) {
-        const existing = await store
-            .index("messageId")
-            .get(msg._id || msg.messageId);
-        if (!existing) {
-            await store.add({
-                chatId,
-                messageId: msg._id || msg.messageId || crypto.randomUUID(),
-                ...msg
-            });
-        }
-    }
-
-    await tx.done;
+// 🔹 Open database
+const openDB = () => {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => reject("Failed to open IndexedDB");
+        request.onsuccess = e => resolve(e.target.result);
+        request.onupgradeneeded = e => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: "receiver_id" });
+            }
+        };
+    });
 };
 
-export const getMessages = async (chatId, limit = 50) => {
-    const tx = db.transaction("messages", "readonly");
-    const store = tx.objectStore("messages");
-    const all = await store.getAll();
-    const filtered = all
-        .filter(m => m.chatId === chatId)
-        .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-        .slice(-limit);
-    await tx.done;
-    return filtered;
+// 🔹 Save messages (only keep last 15)
+export const saveMessages = async (receiver_id, newMessages) => {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+
+    const existing = await new Promise(resolve => {
+        const req = store.get(receiver_id);
+        req.onsuccess = () => resolve(req.result?.messages || []);
+        req.onerror = () => resolve([]);
+    });
+
+    const merged = Array.isArray(newMessages)
+        ? [...existing, ...newMessages]
+        : [...existing, newMessages];
+
+    // Keep only last 15
+    const trimmed = merged.slice(-15);
+    store.put({ receiver_id, messages: trimmed });
+    return tx.complete;
 };
 
-export const mergeMessages = async (chatId, serverMessages) => {
-    const local = await getMessages(chatId);
-    const all = [...local];
+// 🔹 Get messages
+export const getMessages = async receiver_id => {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const store = tx.objectStore(STORE_NAME);
 
-    for (const msg of serverMessages) {
-        const exists = local.find(m => m._id === msg._id);
-        if (!exists) all.push(msg);
-    }
+    return new Promise(resolve => {
+        const req = store.get(receiver_id);
+        req.onsuccess = () => resolve(req.result?.messages || []);
+        req.onerror = () => resolve([]);
+    });
+};
 
-    await saveMessages(chatId, all);
-    return all;
+// 🔹 Merge messages (for sync)
+export const mergeMessages = async (receiver_id, serverMessages) => {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+
+    const existing = await new Promise(resolve => {
+        const req = store.get(receiver_id);
+        req.onsuccess = () => resolve(req.result?.messages || []);
+        req.onerror = () => resolve([]);
+    });
+
+    // Avoid duplicates by filtering unique IDs (if your messages have `_id`)
+    const all = [...existing, ...serverMessages].reduce((acc, msg) => {
+        if (!acc.find(m => m._id === msg._id)) acc.push(msg);
+        return acc;
+    }, []);
+
+    const trimmed = all.slice(-15);
+    store.put({ receiver_id, messages: trimmed });
+
+    return tx.complete;
+};
+export const updateMessagesById = async (receiver_id, newMessagesArray) => {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+
+    // Just overwrite with new array
+    store.put({ receiver_id, messages: newMessagesArray });
+
+    return tx.complete;
 };

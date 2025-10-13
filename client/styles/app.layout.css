@@ -284,7 +284,7 @@ aside .aside-header {
     align-items: center;
     gap: 1rem;
 }
-aside .active {
+aside .option .active {
     color: var(--msg-sent-bg);
     font-weight: 600;
     width: 40px;
@@ -536,7 +536,21 @@ main .chat-box {
     gap: 10px;
     scroll-behavior: auto;
 }
-
+.chat-box .loading-msg {
+    position: absolute;
+    top: 1.8rem;
+    left: 48%;
+    transform: translate(-50%, -50%);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border-top: 5px solid currentColor;
+    border-right: 5px solid currentColor;
+    border-left: 5px solid currentColor;
+    border-bottom: 5px solid transparent;
+    background: transparent;
+    animation: 0.5s rote linear infinite;
+}
 .message {
     max-width: 70%;
     padding: 12px 15px;
@@ -647,5 +661,13 @@ main .chat-box {
     }
     to {
         top: 0;
+    }
+}
+@keyframes rote {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
     }
 }

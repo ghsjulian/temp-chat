@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import useApp from "../store/useApp";
 import useSocket from "../store/useSocket";
@@ -6,42 +6,59 @@ import ChatBubble from "../components/ChatBubble";
 
 const ChatBox = () => {
     const { activeHeader } = useApp();
-    const { messages, getChats } = useSocket();
+    const { messages, loadMoreMessages, hasMore, loadingMore } = useSocket();
     const { id } = useParams();
     const chatBoxRef = useRef(null);
-    const chatEnd = useRef(null);
-    const prevLength = useRef(0);
-    const firstLoad = useRef(true); // track first load
-    // Header on route change
+    const [initialLoaded, setInitialLoaded] = useState(false);
+
+    // Load initial messages
     useEffect(() => {
-        if(!id) return 
-        if (id) activeHeader(true);
-        if (id) getChats(id);
+        if (!id) return;
+        activeHeader(true);
+        setInitialLoaded(true);
     }, [id]);
 
-    // Scroll behavior
+    // Scroll to bottom once after initial load
     useEffect(() => {
-        if (!chatBoxRef.current) return;
-        if (messages.length > prevLength.current) {
-            // New messages arrived, smooth scroll
-            chatBoxRef.current.scrollTo({
-                top: chatBoxRef.current.scrollHeight,
-                behavior: "auto"
+        if (!initialLoaded) return;
+        const box = chatBoxRef.current;
+        if (box) box.scrollTop = box.scrollHeight;
+    }, [initialLoaded, id]);
+
+    // Load more when scrolling to top (fetch oldest)
+    const handleScroll = useCallback(async () => {
+        const box = chatBoxRef.current;
+        if (!box || !hasMore || loadingMore) return;
+        if (box.scrollTop <= 20) {
+            const oldScrollHeight = box.scrollHeight;
+            await loadMoreMessages(id);
+            requestAnimationFrame(() => {
+                const newScrollHeight = box.scrollHeight;
+                box.scrollTop = newScrollHeight - oldScrollHeight;
             });
         }
-        prevLength.current = messages.length;
+    }, [loadMoreMessages, hasMore, loadingMore]);
+useEffect(() => {
+        const chatBox = chatBoxRef.current;
+        if (!chatBox) return;
+        chatBox.scrollTo({
+            top: chatBox.scrollHeight,
+            behavior: "auto"
+        });
     }, [messages]);
-
+    
     return (
-        <div ref={chatBoxRef} className="chat-box">
-            {messages?.map((chat, index) => (
+        <div ref={chatBoxRef} onScroll={handleScroll} className="chat-box">
+            {loadingMore && <div className="loading-msg"></div>}
+
+            {messages.map((msg, index) => (
                 <ChatBubble
-                    key={chat._id || index}
+                    key={msg._id || index}
                     len={index === messages.length - 1}
-                    id={chat._id}
-                    text={chat.text}
-                    sender={chat.sender_id}
-                    time={chat.time}
+                    id={msg._id}
+                    text={msg.text}
+                    sender={msg.sender_id}
+                    time={msg.time}
                 />
             ))}
         </div>
@@ -51,46 +68,48 @@ const ChatBox = () => {
 export default ChatBox;
 
 /*
-import React, { useState, useEffect, useRef } from "react";
-import { NavLink, Outlet, useLocation, useParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import useApp from "../store/useApp";
 import useSocket from "../store/useSocket";
 import ChatBubble from "../components/ChatBubble";
 
 const ChatBox = () => {
-    const { activeHeader, selectedUser, setChatUser } = useApp();
-    const { messages } = useSocket();
-    const [len, setLen] = useState(0);
-    const location = useLocation();
-    const { name, id } = useParams();
-    const [path, setPath] = useState("");
+    const { activeHeader } = useApp();
+    const { messages, getChats, loadMoreMessages, hasMore, loadingMore } =
+        useSocket();
+    const { id } = useParams();
     const chatBoxRef = useRef(null);
+
+    // Fetch initial messages
     useEffect(() => {
-        setPath(location.pathname);
-        if (path !== "/") {
-            activeHeader(true);
-        }
-    }, [path]);
+        if (!id) return;
+        activeHeader(true);
+        getChats(id);
+    }, [id]);
+
+    // Auto scroll to bottom after first load or new message
     useEffect(() => {
-        setLen(messages?.length);
-        chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }, [messages, chatBoxRef]);
+        const chatBox = chatBoxRef.current;
+        if (!chatBox) return;
+        chatBox.scrollTo({
+            top: chatBox.scrollHeight,
+            behavior: "auto"
+        });
+    }, [messages]);
 
     return (
         <div ref={chatBoxRef} className="chat-box">
-            {messages?.length > 0 &&
-                messages?.map((chat, index) => {
-                    return (
-                        <ChatBubble
-                            key={index}
-                            len={index === len-1}
-                            id={chat?._id}
-                            text={chat?.text}
-                            sender={chat?.sender_id}
-                            time={chat?.time}
-                        />
-                    );
-                })}
+            {messages.map((chat, index) => (
+                <ChatBubble
+                    key={chat._id || index}
+                    len={index === messages.length - 1}
+                    id={chat._id}
+                    text={chat.text}
+                    sender={chat.sender_id}
+                    time={chat.time}
+                />
+            ))}
         </div>
     );
 };

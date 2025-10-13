@@ -41,7 +41,7 @@ const sendMessage = async (req, res) => {
             seen: false
         });
         await newMessage.save();
-        return res.json({ success: true, data: newMessage });
+        return res.json(newMessage );
     } catch (error) {
         console.log(error);
         return res.status(403).json({

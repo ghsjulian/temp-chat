@@ -97,7 +97,7 @@ const seedNow = async () => {
         await seedUsers(user.name, user.email, user.password);
         count = index;
     });
-    console.log(`[+] ${count} Users Seeded Successfully\n`);
+    return `[+] Users Seeded Successfully\n`
 };
 
 module.exports = seedNow
