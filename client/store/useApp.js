@@ -66,20 +66,19 @@ const useApp = create((set, get) => ({
     },
     logout: async () => {
         try {
-            const response = axios.post("/auth/user/logout");
-            await deleteDB();
+            const response = await axios.post("/auth/user/logout");
             if (response?.data?.success) {
                 localStorage.removeItem("tempchat");
                 localStorage.removeItem("chat-user");
-                useAuth.setState().user = null;
+                useAuth.setState({ user: null });
                 set({
                     searchUsers: [],
                     chatUsers: [],
-                    selectedUser: [],
+                    selectedUser: {},
                     randomUsers: []
                 });
+                await deleteDB();
             }
-            console.log("[+] User Logout Successfully");
         } catch (err) {
             console.error("Error:", err);
         }

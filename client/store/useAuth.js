@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "../libs/axios";
+import useSocket from "./useSocket"
 
 const useAuth = create((set, get) => ({
     user: JSON.parse(localStorage.getItem("tempchat")) || null,
@@ -19,6 +20,7 @@ const useAuth = create((set, get) => ({
             setTimeout(() => {
                 navigate("/");
                 set({ user: res?.data?.user });
+             //   useSocket.getState().createConnection()
             }, 2500);
         } catch (error) {
             showMessage(error?.response?.data?.message, false);
@@ -39,6 +41,7 @@ const useAuth = create((set, get) => ({
             setTimeout(() => {
                 navigate("/");
                 set({ user: res?.data?.user });
+               useSocket.getState().createConnection()
             }, 2500);
         } catch (error) {
             showMessage(error?.response?.data?.message, false);

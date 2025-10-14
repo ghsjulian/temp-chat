@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 // Import Authentication Here...
 import useAuth from "./store/useAuth";
 import useApp from "./store/useApp";
+import useSocket from "./store/useSocket";
 // Import Laayouts
 import Layouts from "./layouts/Layouts";
 import Home from "./pages/Home";
@@ -19,8 +20,10 @@ import ChatBox from "./pages/ChatBox";
 const App = () => {
     const { user } = useAuth();
     const { activeHeader } = useApp();
+    const { createConnection } = useSocket();
     const isLoggedIn = () => {
         if ((!user && !user?._id) || user === null) return false;
+        createConnection()
         return true;
     };
     return (

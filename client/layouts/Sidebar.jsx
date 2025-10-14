@@ -11,7 +11,7 @@ import useApp from "../store/useApp";
 import timeAgo from "../libs/formatter";
 
 const Sidebar = () => {
-    const { messages } = useSocket();
+    const { messages, onlineUsers } = useSocket();
     const {
         isactiveChatHeader,
         getChatUsers,
@@ -28,7 +28,7 @@ const Sidebar = () => {
     useEffect(() => {
         getChatUsers();
         getRandomUsers();
-    }, [getChatUsers, renderSearch]);
+    }, [getChatUsers, onlineUsers, renderSearch]);
     const userRef = useRef(null);
     const gearRef = useRef(null);
     const [term, setTerm] = useState("");
@@ -42,6 +42,9 @@ const Sidebar = () => {
                 renderChatUser();
             }
         }
+    };
+    const isOnline = id => {
+        return onlineUsers.includes(id) ? "online" : "offline";
     };
 
     return (
@@ -69,11 +72,7 @@ const Sidebar = () => {
                     <div
                         ref={userRef}
                         onClick={toggleUser}
-                        className={
-                            isToggle
-                                ? "icon active"
-                                : "icon"
-                        }
+                        className={isToggle ? "icon active" : "icon"}
                     >
                         <HiOutlineUsers size={25} />
                     </div>
@@ -97,13 +96,23 @@ const Sidebar = () => {
                                   to={`/chat/${user?.name}/${user?._id}`}
                                   className="chat-user"
                               >
-                                  <img
-                                      src={
-                                          user?.avatar
-                                              ? user?.avatar
-                                              : "./icons/user.png"
-                                      }
-                                  />
+                                  <div
+                                      style={{
+                                          border: isOnline(user?._id) === "online"
+                                              ? "2px solid #11ce1c"
+                                              : "2px solid #272828"
+                                      }}
+                                      className="status"
+                                  >
+                                      <img
+                                          src={
+                                              user?.avatar
+                                                  ? user?.avatar
+                                                  : "./icons/user.png"
+                                          }
+                                      />
+                                      <div className={isOnline(user?._id)} />
+                                  </div>
                                   <div className="user">
                                       <span>{user?.name}</span>
                                   </div>
@@ -119,13 +128,23 @@ const Sidebar = () => {
                                   to={`/chat/${chat?.name}/${chat?._id}`}
                                   className="chat-user"
                               >
-                                  <img
-                                      src={
-                                          chat?.avatar
-                                              ? chat?.avatar
-                                              : "./icons/user.png"
-                                      }
-                                  />
+                                  <div
+                                      style={{
+                                          border: isOnline(chat?._id) === "online"
+                                              ? "2px solid #11ce1c"
+                                              : "2px solid #272828"
+                                      }}
+                                      className="status"
+                                  >
+                                      <img
+                                          src={
+                                              chat?.avatar
+                                                  ? chat?.avatar
+                                                  : "./icons/user.png"
+                                          }
+                                      />
+                                      <div className={isOnline(chat?._id)} />
+                                  </div>
                                   <div className="user">
                                       <span>{chat?.name}</span>
                                       <p id="last-message">
@@ -144,13 +163,23 @@ const Sidebar = () => {
                                   to={`/chat/${user?.name}/${user?._id}`}
                                   className="chat-user"
                               >
-                                  <img
-                                      src={
-                                          user?.avatar
-                                              ? user?.avatar
-                                              : "./icons/user.png"
-                                      }
-                                  />
+                                  <div
+                                      style={{
+                                          border: isOnline(user?._id) === "online"
+                                              ? "2px solid #11ce1c"
+                                              : "2px solid #272828"
+                                      }}
+                                      className="status"
+                                  >
+                                      <img
+                                          src={
+                                              user?.avatar
+                                                  ? user?.avatar
+                                                  : "./icons/user.png"
+                                          }
+                                      />
+                                      <div className={isOnline(user?._id)} />
+                                  </div>
                                   <div className="user">
                                       <span>{user?.name}</span>
                                   </div>

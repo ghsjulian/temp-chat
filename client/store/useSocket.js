@@ -1,17 +1,68 @@
 import { create } from "zustand";
 import axios from "../libs/axios";
-import { saveMessages, getMessages, mergeMessages,updateMessagesById } from "../libs/indexDB";
+import {
+    saveMessages,
+    getMessages,
+    mergeMessages,
+    updateMessagesById
+} from "../libs/indexDB";
+import { io } from "socket.io-client";
+import useAuth from "./useAuth";
 
+const SOCKET_SERVER = "http://localhost:3000";
 const MESSAGES_PER_PAGE = 15;
-
 const useSocket = create((set, get) => ({
+    socket: null,
+    connected: false,
+    onlineUsers: [],
     messages: [],
     hasMore: true,
     loadingMore: false,
 
+    createConnection: async () => {
+        if (get().socket) return;
+
+        const socket = io(SOCKET_SERVER, {
+            transports: ["websocket"],
+            auth: { user: useAuth.getState()?.user },
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000
+        });
+        socket.on("connect", () => {
+            set({ connected: true });
+        });
+        socket.on("disconnect", () => {
+            console.log("❌ Socket Disconnected!");
+            set({ connected: false });
+        });
+        socket.on("connect_error", err => {
+            console.error("⚠️ Connection Error : ", err.message);
+        });
+        socket.on("handshake-success", async data => {
+            console.clear();
+            console.info(`✅ Socket Connected : ${data?.clientId}\n`);
+        });
+        /*------> Handle Emits <-----*/
+        socket.on("chat-users", async users => {
+            console.log(users);
+            set({ onlineUsers: users });
+        });
+        socket.on("receive-message", message => {
+            // console.log("Received Message - ", message);
+            set({ messages: [...get().messages, message] });
+        });
+
+        // Set The Socket Object
+        set({ socket });
+    },
+
     sendMessage: async message => {
         try {
             set({ messages: [...get().messages, message] });
+            if(get().onlineUsers.includes(message?.receiver_id)){
+            get().socket.emit("send-message",({to :message?.receiver_id ,message}))
+            }
             const response = await axios.post(
                 `/messages/send-message/${message.receiver_id}`,
                 message
@@ -37,9 +88,8 @@ const useSocket = create((set, get) => ({
                 // Refresh state after merging
                 const chats = response.data.chats;
                 set({ messages: chats });
-                await updateMessagesById(receiverId,chats)
+                await updateMessagesById(receiverId, chats);
                 const updatedLocal = await getMessages(receiverId);
-                console.log(updatedLocal);
             }
         } catch (error) {
             console.error("Error loading chats:", error);
