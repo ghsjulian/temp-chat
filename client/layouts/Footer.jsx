@@ -8,7 +8,7 @@ import useAuth from "../store/useAuth";
 import useSocket from "../store/useSocket";
 
 const Footer = () => {
-    const { sendMessage } = useSocket();
+    const { sendMessage, setTyping } = useSocket();
     const { selectedUser } = useApp();
     const { user } = useAuth();
     const [text, setText] = useState("");
@@ -17,7 +17,7 @@ const Footer = () => {
         const tempMessage = {
             text,
             images: [],
-            isImage : false,
+            isImage: false,
             sender_name: user.name,
             sender_id: user._id,
             sender_avatar: user.avatar,
@@ -25,8 +25,7 @@ const Footer = () => {
             receiver_id: selectedUser._id,
             receiver_avatar: selectedUser.avatar,
             time: Date.now(),
-            last_message: text,
-            
+            last_message: text
         };
         sendMessage(tempMessage);
         setText("");
@@ -39,8 +38,9 @@ const Footer = () => {
             </div>
             <input
                 onKeyDown={e => {
+                    setTyping(user?._id,true);
                     if (e.keyCode === 13) {
-                        sendText();
+                        sendText(user?._id,false);
                     }
                     return;
                 }}

@@ -11,7 +11,7 @@ import useApp from "../store/useApp";
 import timeAgo from "../libs/formatter";
 
 const Sidebar = () => {
-    const { messages, onlineUsers } = useSocket();
+    const { socket, messages, onlineUsers,typing } = useSocket();
     const {
         isactiveChatHeader,
         getChatUsers,
@@ -47,6 +47,13 @@ const Sidebar = () => {
         return onlineUsers.includes(id) ? "online" : "offline";
     };
 
+const isTyping =(id)=>{
+    return typing.includes(id)
+}
+useEffect(()=>{
+    getChatUsers()
+},[typing])
+    
     return (
         <aside style={{ zIndex: isactiveChatHeader && "0" }}>
             <div className="aside-header">
@@ -98,9 +105,10 @@ const Sidebar = () => {
                               >
                                   <div
                                       style={{
-                                          border: isOnline(user?._id) === "online"
-                                              ? "2px solid #11ce1c"
-                                              : "2px solid #272828"
+                                          border:
+                                              isOnline(user?._id) === "online"
+                                                  ? "2px solid #11ce1c"
+                                                  : "2px solid #272828"
                                       }}
                                       className="status"
                                   >
@@ -130,9 +138,10 @@ const Sidebar = () => {
                               >
                                   <div
                                       style={{
-                                          border: isOnline(chat?._id) === "online"
-                                              ? "2px solid #11ce1c"
-                                              : "2px solid #272828"
+                                          border:
+                                              isOnline(chat?._id) === "online"
+                                                  ? "2px solid #11ce1c"
+                                                  : "2px solid #272828"
                                       }}
                                       className="status"
                                   >
@@ -148,7 +157,7 @@ const Sidebar = () => {
                                   <div className="user">
                                       <span>{chat?.name}</span>
                                       <p id="last-message">
-                                          {chat?.last_message}
+                                          {isTyping(chat?._id) ? "Typing..." : chat?.last_message}
                                       </p>
                                   </div>
                                   <time>{timeAgo(parseInt(chat?.time))}</time>
@@ -165,9 +174,10 @@ const Sidebar = () => {
                               >
                                   <div
                                       style={{
-                                          border: isOnline(user?._id) === "online"
-                                              ? "2px solid #11ce1c"
-                                              : "2px solid #272828"
+                                          border:
+                                              isOnline(user?._id) === "online"
+                                                  ? "2px solid #11ce1c"
+                                                  : "2px solid #272828"
                                       }}
                                       className="status"
                                   >

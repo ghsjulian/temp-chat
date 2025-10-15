@@ -15,6 +15,8 @@ const useApp = create((set, get) => ({
     isSearch: false,
     appTheme: null,
     chatTheme: null,
+    isAudioCalling : false,
+    isVideoCalling : false,
 
     activeHeader: type => {
         set({ isactiveChatHeader: type });
@@ -82,6 +84,12 @@ const useApp = create((set, get) => ({
         } catch (err) {
             console.error("Error:", err);
         }
+    },
+    makeVideoCall : (type)=>{
+        set({isVideoCalling : type})
+    },
+    makeAudioCall : ()=>{
+        set({isAudioCalling : true})
     }
 }));
 

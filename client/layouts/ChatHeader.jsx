@@ -8,7 +8,7 @@ import useSocket from "../store/useSocket";
 
 const ChatHeader = () => {
     const { onlineUsers } = useSocket();
-    const { selectedUser, setChatUser } = useApp();
+    const { selectedUser, setChatUser,isVideoCalling,makeVideoCall } = useApp();
     const [isOnline, setOnline] = useState(false);
     useEffect(() => {
         if (onlineUsers.includes(selectedUser?._id)) {
@@ -36,7 +36,7 @@ const ChatHeader = () => {
                 <div className="icon call">
                     <MdAddIcCall size={30} />
                 </div>
-                <div className="icon video">
+                <div onClick={()=>makeVideoCall(true)} className="icon video">
                     <MdVideoCall size={45} />
                 </div>
             </div>

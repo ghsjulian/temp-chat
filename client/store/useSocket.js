@@ -16,6 +16,8 @@ const useSocket = create((set, get) => ({
     connected: false,
     onlineUsers: [],
     messages: [],
+    typing : [],
+    isTyping: false,
     hasMore: true,
     loadingMore: false,
 
@@ -40,17 +42,18 @@ const useSocket = create((set, get) => ({
             console.error("⚠️ Connection Error : ", err.message);
         });
         socket.on("handshake-success", async data => {
-            console.clear();
             console.info(`✅ Socket Connected : ${data?.clientId}\n`);
         });
         /*------> Handle Emits <-----*/
         socket.on("chat-users", async users => {
-            console.log(users);
             set({ onlineUsers: users });
         });
         socket.on("receive-message", message => {
             // console.log("Received Message - ", message);
             set({ messages: [...get().messages, message] });
+        });
+        socket.on("typing-status", userList => {
+            set({typing : userList})
         });
 
         // Set The Socket Object
@@ -60,8 +63,12 @@ const useSocket = create((set, get) => ({
     sendMessage: async message => {
         try {
             set({ messages: [...get().messages, message] });
-            if(get().onlineUsers.includes(message?.receiver_id)){
-            get().socket.emit("send-message",({to :message?.receiver_id ,message}))
+            if (get().onlineUsers.includes(message?.receiver_id)) {
+                get().socket.emit("send-message", {
+                    to: message?.receiver_id,
+                    from : message?.sender_id,
+                    message
+                });
             }
             const response = await axios.post(
                 `/messages/send-message/${message.receiver_id}`,
@@ -122,6 +129,15 @@ const useSocket = create((set, get) => ({
             set({ loadingMore: false });
         } finally {
             set({ loadingMore: false, hasMore: false });
+        }
+    },
+    setTyping: (id, status) => {
+        set({ isTyping: status });
+        if (get().onlineUsers.includes(id)) {
+            get().socket.emit("typing-status", {
+                to: id,
+                isTyping: status
+            });
         }
     }
 }));

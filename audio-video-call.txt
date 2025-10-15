@@ -1,0 +1,206 @@
+// Importing React and necessary hooks
+import React, { useState, useEffect, useRef } from "react";
+
+// Import Socket.IO client for signaling (real-time messaging)
+import { io } from "socket.io-client";
+
+// Import simple-peer for peer-to-peer (WebRTC) connections
+import Peer from "simple-peer";
+
+// Connect to your Socket.IO server
+// Replace with your backend URL if running online
+const socket = io("http://localhost:5000");
+
+const VideoCall = () => {
+    // Reference to our own video element
+    const myVideo = useRef(null);
+
+    // Reference to remote user's video element
+    const userVideo = useRef(null);
+
+    // Our media stream (camera + mic)
+    const [videoStream, setVideoStream] = useState(null);
+
+    // Store our socket ID (unique for each connected user)
+    const [myId, setMyId] = useState("");
+
+    // Store the ID we want to call
+    const [idToCall, setIdToCall] = useState("");
+
+    // Store call info (for incoming calls)
+    const [receivingCall, setReceivingCall] = useState(false);
+    const [caller, setCaller] = useState("");
+    const [callerSignal, setCallerSignal] = useState(null);
+
+    // Store the peer connection reference
+    const connectionRef = useRef();
+
+    // --------------------------
+    // 1️⃣ Get user camera + mic
+    // --------------------------
+    useEffect(() => {
+        // Ask for camera and microphone access
+        navigator.mediaDevices
+            .getUserMedia({ video: true, audio: true })
+            .then((stream) => {
+                // Save stream in state
+                setVideoStream(stream);
+
+                // Show our camera on the video element
+                if (myVideo.current) myVideo.current.srcObject = stream;
+            })
+            .catch((error) => {
+                console.error("Error accessing media devices:", error);
+            });
+
+        // --------------------------
+        // 2️⃣ When connected to socket server
+        // --------------------------
+        socket.on("connect", () => {
+            // Save our unique socket ID
+            setMyId(socket.id);
+            console.log("Connected to server. My ID:", socket.id);
+        });
+
+        // --------------------------
+        // 3️⃣ Listen for incoming call
+        // --------------------------
+        socket.on("incomingCall", (data) => {
+            console.log("Incoming call from:", data.from);
+            setReceivingCall(true);
+            setCaller(data.from);
+            setCallerSignal(data.signal);
+        });
+    }, []); // Run once after component mounts
+
+    // --------------------------
+    // 4️⃣ Function: Start calling another user
+    // --------------------------
+    const callUser = (id) => {
+        // Create a new Peer connection (initiator = true means we start the call)
+        const peer = new Peer({
+            initiator: true,
+            trickle: false, // We’ll send full signal data at once
+            stream: videoStream, // Attach our camera/mic stream
+        });
+
+        // When our peer has signal data (offer) → send it to server
+        peer.on("signal", (data) => {
+            console.log("Sending call signal to:", id);
+            socket.emit("callUser", {
+                userToCall: id,   // ID of user we’re calling
+                signalData: data, // WebRTC offer signal
+                from: myId,       // Our socket ID
+            });
+        });
+
+        // When we receive remote video stream → show it on userVideo element
+        peer.on("stream", (stream) => {
+            if (userVideo.current) userVideo.current.srcObject = stream;
+        });
+
+        // When our call is accepted → add their signal data to our peer
+        socket.on("callAccepted", (signal) => {
+            console.log("Call accepted by", id);
+            peer.signal(signal); // Complete the WebRTC handshake
+        });
+
+        // Save this peer instance to reference later
+        connectionRef.current = peer;
+    };
+
+    // --------------------------
+    // 5️⃣ Function: Answer incoming call
+    // --------------------------
+    const answerCall = () => {
+        setReceivingCall(false); // Hide “incoming call” UI
+        const peer = new Peer({
+            initiator: false, // We’re answering, not starting
+            trickle: false,
+            stream: videoStream,
+        });
+
+        // When we have our answer signal → send back to caller
+        peer.on("signal", (data) => {
+            socket.emit("answerCall", {
+                signal: data, // WebRTC answer
+                to: caller,   // Send back to caller
+            });
+        });
+
+        // When remote stream is received → show it
+        peer.on("stream", (stream) => {
+            if (userVideo.current) userVideo.current.srcObject = stream;
+        });
+
+        // Use caller’s signal to start connection
+        peer.signal(callerSignal);
+
+        connectionRef.current = peer;
+    };
+
+    // --------------------------
+    // 6️⃣ JSX (UI)
+    // --------------------------
+    return (
+        <div style={{ textAlign: "center", padding: "20px" }}>
+            <h2>🎥 Video Call (Signaling Example)</h2>
+
+            <p><strong>Your ID:</strong> {myId}</p>
+
+            <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+                {/* Our video */}
+                <video
+                    playsInline
+                    muted
+                    autoPlay
+                    ref={myVideo}
+                    style={{
+                        width: "300px",
+                        borderRadius: "12px",
+                        border: "2px solid #333",
+                    }}
+                ></video>
+
+                {/* Other user’s video */}
+                <video
+                    playsInline
+                    autoPlay
+                    ref={userVideo}
+                    style={{
+                        width: "300px",
+                        borderRadius: "12px",
+                        border: "2px solid #333",
+                    }}
+                ></video>
+            </div>
+
+            {/* Input box to call another user */}
+            <div style={{ marginTop: "20px" }}>
+                <input
+                    type="text"
+                    placeholder="Enter ID to call"
+                    value={idToCall}
+                    onChange={(e) => setIdToCall(e.target.value)}
+                    style={{ padding: "6px", width: "200px" }}
+                />
+                <button
+                    onClick={() => callUser(idToCall)}
+                    style={{ marginLeft: "10px", padding: "6px 12px" }}
+                >
+                    📞 Call
+                </button>
+            </div>
+
+            {/* If someone is calling us */}
+            {receivingCall && (
+                <div style={{ marginTop: "20px" }}>
+                    <h4>📲 Incoming call from: {caller}</h4>
+                    <button onClick={answerCall}>✅ Answer</button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default VideoCall;

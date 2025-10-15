@@ -10,6 +10,7 @@ class SocketServer {
         this.app = null;
         this.server = null;
         this.clients = new Set();
+        this.typeingUsers = new Set();
         this.createConnection();
     }
     createConnection() {
@@ -41,8 +42,25 @@ class SocketServer {
 
             socket.on("send-message", async data => {
                 const to = data?.to;
-                this.clients[to].emit("receive-message",(data?.message));
+                const from = data?.from;
+                if (this.typeingUsers[from]) {
+                    delete this.typeingUsers[from];
+                    this.clients[from].emit(
+                        "typing-status",
+                        Object.keys(this.typeingUsers)
+                    );
+                }
+                this.clients[to].emit("receive-message", data?.message);
             });
+            socket.on("typing-status", async data => {
+                const to = data?.to;
+                this.typeingUsers[to] = true;
+                this.clients[to].emit(
+                    "typing-status",
+                    Object.keys(this.typeingUsers)
+                );
+            });
+
             socket.on("disconnect", () => {
                 delete this.clients[clientId];
                 this.sendChatUsers(clientId);

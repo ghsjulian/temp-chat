@@ -6,9 +6,17 @@ import Sidebar from "./Sidebar";
 import Settings from "../components/Settings";
 import useApp from "../store/useApp";
 import ChatHeader from "./ChatHeader";
+import VideoCall from "../components/VideoCall"
+
 
 const Layouts = () => {
-    const { isactiveChatHeader, activeHeader, isSettingOpen } = useApp();
+    const {
+        isactiveChatHeader,
+        activeHeader,
+        isSettingOpen,
+        isAudioCalling,
+        isVideoCalling
+    } = useApp();
 
     return (
         <div className="app-container">
@@ -19,6 +27,7 @@ const Layouts = () => {
                 </header>
             )}
             <Sidebar />
+            {isVideoCalling && <VideoCall />}
             {isSettingOpen && <Settings />}
             <main>
                 <Outlet />
