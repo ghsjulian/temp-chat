@@ -38,9 +38,9 @@ const Footer = () => {
             </div>
             <input
                 onKeyDown={e => {
-                    setTyping(user?._id,true);
+                    setTyping(selectedUser?._id,true);
                     if (e.keyCode === 13) {
-                        sendText(user?._id,false);
+                        sendText(selectedUser?._id,false);
                     }
                     return;
                 }}

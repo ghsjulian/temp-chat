@@ -80,6 +80,7 @@ const useApp = create((set, get) => ({
                     randomUsers: []
                 });
                 await deleteDB();
+                useSocket.getState().socket.emit("logout",useAuth.getState().user._id)
             }
         } catch (err) {
             console.error("Error:", err);

@@ -45,7 +45,7 @@ class SocketServer {
                 const from = data?.from;
                 if (this.typeingUsers[from]) {
                     delete this.typeingUsers[from];
-                    this.clients[from].emit(
+                    this.clients[to].emit(
                         "typing-status",
                         Object.keys(this.typeingUsers)
                     );
@@ -54,13 +54,19 @@ class SocketServer {
             });
             socket.on("typing-status", async data => {
                 const to = data?.to;
-                this.typeingUsers[to] = true;
+                const typer = data?.typer;
+                this.typeingUsers[typer] = true;
                 this.clients[to].emit(
                     "typing-status",
                     Object.keys(this.typeingUsers)
                 );
             });
 
+            socket.on("logout", (id) => {
+                delete this.clients[id];
+                this.sendChatUsers(id);
+                console.log(`\n[-] ${clientName} Logout Successfully!\n`);
+            });
             socket.on("disconnect", () => {
                 delete this.clients[clientId];
                 this.sendChatUsers(clientId);

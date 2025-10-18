@@ -8,6 +8,7 @@ import {
 } from "../libs/indexDB";
 import { io } from "socket.io-client";
 import useAuth from "./useAuth";
+import useApp from "./useApp";
 
 const SOCKET_SERVER = "http://localhost:3000";
 const MESSAGES_PER_PAGE = 15;
@@ -16,7 +17,7 @@ const useSocket = create((set, get) => ({
     connected: false,
     onlineUsers: [],
     messages: [],
-    typing : [],
+    typing: [],
     isTyping: false,
     hasMore: true,
     loadingMore: false,
@@ -53,7 +54,7 @@ const useSocket = create((set, get) => ({
             set({ messages: [...get().messages, message] });
         });
         socket.on("typing-status", userList => {
-            set({typing : userList})
+            set({ typing: userList });
         });
 
         // Set The Socket Object
@@ -62,11 +63,12 @@ const useSocket = create((set, get) => ({
 
     sendMessage: async message => {
         try {
+            await useApp.getState().getChatUsers();
             set({ messages: [...get().messages, message] });
             if (get().onlineUsers.includes(message?.receiver_id)) {
                 get().socket.emit("send-message", {
                     to: message?.receiver_id,
-                    from : message?.sender_id,
+                    from: message?.sender_id,
                     message
                 });
             }
@@ -97,9 +99,8 @@ const useSocket = create((set, get) => ({
                 set({ messages: chats });
                 await updateMessagesById(receiverId, chats);
                 const updatedLocal = await getMessages(receiverId);
-            }
-        } catch (error) {
-            console.error("Error loading chats:", error);
+            } 
+        } catch (error) {set({ messages: [] });
         }
     },
 
@@ -136,6 +137,7 @@ const useSocket = create((set, get) => ({
         if (get().onlineUsers.includes(id)) {
             get().socket.emit("typing-status", {
                 to: id,
+                typer: useAuth.getState().user?._id,
                 isTyping: status
             });
         }

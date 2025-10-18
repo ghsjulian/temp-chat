@@ -11,7 +11,7 @@ import useApp from "../store/useApp";
 import timeAgo from "../libs/formatter";
 
 const Sidebar = () => {
-    const { socket, messages, onlineUsers,typing } = useSocket();
+    const { socket, messages, onlineUsers, typing } = useSocket();
     const {
         isactiveChatHeader,
         getChatUsers,
@@ -28,7 +28,7 @@ const Sidebar = () => {
     useEffect(() => {
         getChatUsers();
         getRandomUsers();
-    }, [getChatUsers, onlineUsers, renderSearch]);
+    }, [typing, messages, getChatUsers, onlineUsers, renderSearch]);
     const userRef = useRef(null);
     const gearRef = useRef(null);
     const [term, setTerm] = useState("");
@@ -41,19 +41,19 @@ const Sidebar = () => {
                 setTerm("");
                 renderChatUser();
             }
+        } else {
+            getRandomUsers();
         }
+        getChatUsers()
     };
     const isOnline = id => {
         return onlineUsers.includes(id) ? "online" : "offline";
     };
 
-const isTyping =(id)=>{
-    return typing.includes(id)
-}
-useEffect(()=>{
-    getChatUsers()
-},[typing])
-    
+    const isTyping = id => {
+        return typing.includes(id);
+    };
+
     return (
         <aside style={{ zIndex: isactiveChatHeader && "0" }}>
             <div className="aside-header">
@@ -157,7 +157,9 @@ useEffect(()=>{
                                   <div className="user">
                                       <span>{chat?.name}</span>
                                       <p id="last-message">
-                                          {isTyping(chat?._id) ? "Typing..." : chat?.last_message}
+                                          {isTyping(chat?._id)
+                                              ? "Typing..."
+                                              : chat?.last_message}
                                       </p>
                                   </div>
                                   <time>{timeAgo(parseInt(chat?.time))}</time>
