@@ -7,7 +7,7 @@
         "client": "vite",
         "server": "nodemon server/server.js",
         "start": "node server/server.js",
-        "build": "npm install && npm run build",
+        "build": "vite build",
         "lint": "eslint .",
         "preview": "vite preview"
     },
