@@ -10,7 +10,7 @@ import { io } from "socket.io-client";
 import useAuth from "./useAuth";
 import useApp from "./useApp";
 
-const SOCKET_SERVER = "http://localhost:3000";
+const SOCKET_SERVER = "/";
 const MESSAGES_PER_PAGE = 15;
 const useSocket = create((set, get) => ({
     socket: null,
